@@ -84,12 +84,36 @@ Camera #0:
 --------------------
 
 # To use during dataset recording
---robot.cameras="{ top: {type: realsense, serial_number_or_name: 141722074564, width: 640, height: 480, use_depth: true}, ...}"
+--robot.cameras="{ top: {type: intelrealsense, serial_number_or_name: 141722074564, width: 640, height: 480, fps: 15, use_depth: true}, ...}"
 ```
 
 Use both cameras,
 
 ```bash
---robot.cameras="{ wrist: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30}, top: {type: realsense, serial_number_or_name: 141722074564, width: 640, height: 480, use_depth: true}}"
+--robot.cameras="{ wrist: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30}, top: {type: intelrealsense, serial_number_or_name: 141722074564, width: 640, height: 480, fps: 15, use_depth: true}}"
+```
+
+## Training
+
+### Grab the red cube
+
+```bash
+lerobot-record \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=my_awesome_follower_arm \
+    --robot.cameras="{ wrist: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30}, top: {type: intelrealsense, serial_number_or_name: 141722074564, width: 640, height: 480, fps: 15, use_depth: true}}" \
+    --teleop.type=so101_leader \
+    --teleop.port=/dev/ttyACM0 \
+    --teleop.id=my_awesome_leader_arm \
+    --display_data=true \
+    --dataset.repo_id=${HF_USER}/grab-red-cube \
+    --dataset.episode_time_s=30 \
+    --dataset.reset_time_s=10 \
+    --dataset.num_episodes=5 \
+    --dataset.single_task="Grab the red cube" \
+    --dataset.streaming_encoding=true \
+    --dataset.encoder_threads=2 \
+    --dataset.push_to_hub=False
 ```
 
