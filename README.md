@@ -93,9 +93,9 @@ Use both cameras,
 --robot.cameras="{ wrist: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30}, top: {type: intelrealsense, serial_number_or_name: 141722074564, width: 640, height: 480, fps: 15, use_depth: true}}"
 ```
 
-## Training
+## Grab the red cube
 
-### Grab the red cube
+Data collection,
 
 ```bash
 lerobot-record \
@@ -107,13 +107,43 @@ lerobot-record \
     --teleop.port=/dev/ttyACM0 \
     --teleop.id=my_awesome_leader_arm \
     --display_data=true \
-    --dataset.repo_id=${HF_USER}/grab-red-cube \
-    --dataset.episode_time_s=30 \
+    --dataset.repo_id=${HF_USER}/put-red-cube-in-box \
+    --dataset.episode_time_s=20 \
     --dataset.reset_time_s=10 \
-    --dataset.num_episodes=5 \
-    --dataset.single_task="Grab the red cube" \
+    --dataset.num_episodes=50 \
+    --dataset.single_task="Put red cube in box" \
     --dataset.streaming_encoding=true \
     --dataset.encoder_threads=2 \
     --dataset.push_to_hub=False
+```
+
+Training ACT,
+
+```bash
+lerobot-train \
+  --dataset.repo_id=aaronchongth/put-red-cube-in-box \
+  --policy.type=act \
+  --output_dir=outputs/train/hf_act_record0 \
+  --job_name=hf_act_training_job \
+  --policy.device=cuda \
+  --wandb.enable=False \
+  --policy.repo_id=aaronchongth/hf_act_recordpolicy0
+```
+
+Evaluating ACT,
+
+```bash
+DISPLAY=:0 lerobot-record \
+    --robot.type=so100_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=my_awesome_follower_arm \
+    --robot.cameras="{ wrist: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30}, top: {type: intelrealsense, serial_number_or_name: 141722074564, width: 640, height: 480, fps: 15, use_depth: true}}" \
+    --display_data=true \
+    --dataset.repo_id=aaronchongth/eval_act_your_dataset \
+    --dataset.num_episodes=10 \
+    --dataset.single_task="Put red cube in box" \
+    --dataset.streaming_encoding=true \
+    --dataset.encoder_threads=2 \
+    --policy.path=aaronchongth/hf_act_recordpolicy0
 ```
 
