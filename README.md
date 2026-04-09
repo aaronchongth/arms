@@ -141,6 +141,7 @@ DISPLAY=:0 lerobot-record \
     --display_data=true \
     --dataset.repo_id=aaronchongth/eval_act_your_dataset \
     --dataset.num_episodes=10 \
+    --dataset.episode_time_s=120 \
     --dataset.single_task="Put red cube in box" \
     --dataset.streaming_encoding=true \
     --dataset.encoder_threads=2 \
